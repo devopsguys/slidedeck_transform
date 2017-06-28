@@ -21,7 +21,21 @@ left = top = Inches(2)
 for slide in PRS.slides:
     g = "/Users/edmundd/Desktop/logo.gif"
     top = PRS.slide_height - Inches(1)
-    pic = slide.shapes.add_picture(g, left, top, width, height)
+    
+
+    # print "==="
+    #     print('%d %s' % (shape.placeholder_format.idx, shape.name))
+    for shape in slide.placeholders:
+        if shape.name == "Picture Placeholder 3":
+            idx = shape.placeholder_format.idx
+            pic = slide.shapes.add_picture(g, left, top, width, height)
+            # print slide.placeholders[idx].element.xml
+        # else:
+            # print shape.name
+
+    # print "==="
+
+   
 
     if slide.has_notes_slide:
         text_frame = slide.notes_slide.notes_text_frame
