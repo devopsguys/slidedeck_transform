@@ -1,7 +1,19 @@
 import sys
 import json
+import os
 from pptx import Presentation
 from pptx.util import Inches, Pt
+from PIL import Image, ImageChops
+
+TEMP_LOGO_FILE = "temp_logo.png"
+
+def trim(im):
+    bg = Image.new(im.mode, im.size, im.getpixel((0,0)))
+    diff = ImageChops.difference(im, bg)
+    diff = ImageChops.add(diff, diff, 1.0, -100)
+    bbox = diff.getbbox()
+    if bbox:
+        return im.crop(bbox)
 
 def delete_slide(prs, slide):
     #Make dictionary with necessary information
@@ -19,15 +31,18 @@ width = height = Inches(1)
 left = top = Inches(2)
 
 for slide in PRS.slides:
-    # logo_image = "/Users/edmundd/Desktop/logo_gb.png"
-    logo_image = "/Users/edmundd/Desktop/Nokia-logo.jpg"
+    logo_image = "/Users/edmundd/Desktop/logo_gb.png"
+    # logo_image = "/Users/edmundd/Desktop/Nokia-logo.jpg"
     # logo_image = "/Users/edmundd/Desktop/logo.gif"
     
+    # trim(Image.open(logo_image)).save(TEMP_LOGO_FILE)
+
+    Image.open(logo_image).save(TEMP_LOGO_FILE)
 
     for shape in slide.placeholders:
         if shape.name == "Picture Placeholder 3":
             idx = shape.placeholder_format.idx
-            pic = slide.shapes.add_picture(logo_image, left, slide.placeholders[idx].top, None, slide.placeholders[idx].height)
+            pic = slide.shapes.add_picture(TEMP_LOGO_FILE, left, slide.placeholders[idx].top, None, slide.placeholders[idx].height)
 
     if slide.has_notes_slide:
         text_frame = slide.notes_slide.notes_text_frame
@@ -37,5 +52,7 @@ for slide in PRS.slides:
                 delete_slide(PRS, slide)
         except:
             pass
+    
+    os.remove(TEMP_LOGO_FILE) 
 
 PRS.save('/Users/edmundd/Desktop/Test Presentation2.pptx')
