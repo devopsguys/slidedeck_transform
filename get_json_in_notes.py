@@ -19,23 +19,15 @@ width = height = Inches(1)
 left = top = Inches(2)
 
 for slide in PRS.slides:
-    g = "/Users/edmundd/Desktop/logo.gif"
-    top = PRS.slide_height - Inches(1)
+    # logo_image = "/Users/edmundd/Desktop/logo_gb.png"
+    logo_image = "/Users/edmundd/Desktop/Nokia-logo.jpg"
+    # logo_image = "/Users/edmundd/Desktop/logo.gif"
     
 
-    # print "==="
-    #     print('%d %s' % (shape.placeholder_format.idx, shape.name))
     for shape in slide.placeholders:
         if shape.name == "Picture Placeholder 3":
             idx = shape.placeholder_format.idx
-            pic = slide.shapes.add_picture(g, left, top, width, height)
-            # print slide.placeholders[idx].element.xml
-        # else:
-            # print shape.name
-
-    # print "==="
-
-   
+            pic = slide.shapes.add_picture(logo_image, left, slide.placeholders[idx].top, None, slide.placeholders[idx].height)
 
     if slide.has_notes_slide:
         text_frame = slide.notes_slide.notes_text_frame
