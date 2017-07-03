@@ -8,13 +8,15 @@ import regex
 TEMP_LOGO_FILE = "temp_logo.png"
 
 def get_tags_in_comments(text):
-    jsons = find_json_in_string(text)
-    tags = []
-    if jsons:
-        tags = json.loads(jsons[0])['tags']
-        if not isinstance(tags, list):
-            tags = [tags]
-    return tags
+    json_list = find_json_in_string(text)
+    all_tags = []
+    if json_list:
+        for json_block in json_list:
+            tags = json.loads(json_block)['tags']
+            if not isinstance(tags, list):
+                tags = [tags]
+            all_tags += tags
+    return all_tags
 
 def find_json_in_string(text):
     return regex.findall('{(?:[^{}]|(?R))*}', text)
