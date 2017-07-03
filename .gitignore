@@ -1,2 +1,5 @@
 env/
 temp_logo.png
+*.pyc
+.cache
+.vscode
