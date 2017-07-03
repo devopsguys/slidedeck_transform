@@ -2,7 +2,6 @@ import sys
 import json
 import os
 from pptx import Presentation
-from pptx.util import Inches, Pt
 from PIL import Image, ImageChops
 import regex
 
@@ -11,9 +10,9 @@ TEMP_LOGO_FILE = "temp_logo.png"
 def get_tags_in_comments(text):
     jsons = find_json_in_string(text)
     tags = []
-    if len(jsons) > 0:
+    if not jsons:
         tags = json.loads(jsons[0])['tags']
-        if not isinstance(tags,list):
+        if not isinstance(tags, list):
             tags = [tags]
     return tags
 
@@ -40,16 +39,13 @@ def main():
     print 'Number of arguments:', len(sys.argv), 'arguments.'
     print 'Argument List:', str(sys.argv)
 
-    PRS = Presentation(sys.argv[1])
+    presentation = Presentation(sys.argv[1])
 
-    width = height = Inches(1)
-    left = top = Inches(2)
-
-    for slide in PRS.slides:
+    for slide in presentation.slides:
         logo_image = "/Users/edmundd/Desktop/logo_gb.png"
         # logo_image = "/Users/edmundd/Desktop/Nokia-logo.jpg"
         # logo_image = "/Users/edmundd/Desktop/logo.gif"
-        
+
         # trim(Image.open(logo_image)).save(TEMP_LOGO_FILE)
 
         Image.open(logo_image).save(TEMP_LOGO_FILE)
@@ -57,17 +53,21 @@ def main():
         for shape in slide.placeholders:
             if shape.name == "Picture Placeholder 3":
                 idx = shape.placeholder_format.idx
-                pic = slide.shapes.add_picture(TEMP_LOGO_FILE, left, slide.placeholders[idx].top, None, slide.placeholders[idx].height)
+                slide.shapes.add_picture(TEMP_LOGO_FILE,
+                                         slide.placeholders[idx].left,
+                                         slide.placeholders[idx].top,
+                                         None,
+                                         slide.placeholders[idx].height)
 
         if slide.has_notes_slide:
             text_frame = slide.notes_slide.notes_text_frame
-            try:
+            try: #TODO remove this try-except and replace with more defensive methods
                 metadata = json.loads(text_frame.text)
                 if "hello" in metadata['tags']:
-                    delete_slide(PRS, slide)
+                    delete_slide(presentation, slide)
             except:
                 pass
-        
-        os.remove(TEMP_LOGO_FILE) 
 
-    PRS.save('/Users/edmundd/Desktop/Test Presentation2.pptx')
+        os.remove(TEMP_LOGO_FILE)
+
+    presentation.save('/Users/edmundd/Desktop/Test Presentation2.pptx')
