@@ -4,8 +4,12 @@ import os
 from pptx import Presentation
 from pptx.util import Inches, Pt
 from PIL import Image, ImageChops
+import regex
 
 TEMP_LOGO_FILE = "temp_logo.png"
+
+def find_json_in_string(text):
+    return regex.findall('{(?:[^{}]|(?R))*}', text)
 
 def trim(im):
     bg = Image.new(im.mode, im.size, im.getpixel((0,0)))
