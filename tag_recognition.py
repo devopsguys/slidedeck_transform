@@ -10,7 +10,7 @@ TEMP_LOGO_FILE = "temp_logo.png"
 def get_tags_in_comments(text):
     jsons = find_json_in_string(text)
     tags = []
-    if not jsons:
+    if jsons:
         tags = json.loads(jsons[0])['tags']
         if not isinstance(tags, list):
             tags = [tags]

@@ -1,4 +1,4 @@
 python-pptx
 pillow
 regex
-nose
+pytest
