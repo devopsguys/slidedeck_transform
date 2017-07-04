@@ -5,7 +5,12 @@ from pptx import Presentation
 from PIL import Image, ImageChops
 import regex
 
+
 TEMP_LOGO_FILE = "temp_logo.png"
+
+
+def uniq(items):
+    return list(set(items))
 
 
 def is_json(text):
@@ -16,7 +21,20 @@ def is_json(text):
     return True
 
 
-def get_tags_in_comments(text):
+def get_all_tags_in_presentation(presentation):
+    tags = []
+    for slide in presentation.slides:
+        if slide.has_notes_slide:
+            text_frame = slide.notes_slide.notes_text_frame
+            tags += get_all_tags_in_comment(text_frame.text)
+    return uniq(tags)
+
+
+def find_json_in_string(text):
+    return regex.findall('{(?:[^{}]|(?R))*}', text)
+
+
+def get_all_tags_in_comment(text):
     json_list = find_json_in_string(text)
     all_tags = []
     if json_list:
@@ -27,10 +45,6 @@ def get_tags_in_comments(text):
                     tags = [tags]
                 all_tags += tags
     return all_tags
-
-
-def find_json_in_string(text):
-    return regex.findall('{(?:[^{}]|(?R))*}', text)
 
 
 def trim(image):
@@ -65,6 +79,9 @@ def main():
     # logo_image = "/Users/edmundd/Desktop/logo.gif"
     # trim(Image.open(logo_image)).save(TEMP_LOGO_FILE)
 
+    all_tags = get_all_tags_in_presentation(presentation)
+    print "All tags: " + str(all_tags)
+
     Image.open(logo_image).save(TEMP_LOGO_FILE)
     for index, slide in enumerate(presentation.slides):
         print "{0}/{1}".format(index, len(presentation.slides))
@@ -80,7 +97,7 @@ def main():
 
         if slide.has_notes_slide:
             text_frame = slide.notes_slide.notes_text_frame
-            tags = get_tags_in_comments(text_frame.text)
+            tags = get_all_tags_in_comment(text_frame.text)
             if "deleteme" in tags:
                 print "Deleting slide {0} with matching tag '{1}'".format(index, "deleteme")
                 delete_slide(presentation, slide)
