@@ -1,3 +1,4 @@
+import argparse
 import sys
 import json
 import os
@@ -7,6 +8,19 @@ import regex
 
 
 TEMP_LOGO_FILE = "temp_logo.png"
+
+parser = argparse.ArgumentParser(description='Transform a pptx presentation')
+required = parser.add_argument_group('Required arguments')
+optional = parser.add_argument_group('Optional arguments')
+optional.add_argument('--strip-logo', action='store_true',
+                      help="Strip any whitespace from the logo")
+required.add_argument('--file', nargs=1, action='store',
+                      help="Path to the powerpoint presentation file")
+required.add_argument('--logo', nargs=1, action='store',
+                      help="Path to the logo file")
+
+
+ARGS = parser.parse_args()
 
 
 def uniq(items):
@@ -67,13 +81,13 @@ def delete_slide(prs, slide):
 
 def main():
 
-    print 'Number of arguments:', len(sys.argv), 'arguments.'
-    print 'Argument List:', str(sys.argv)
-    presentation_file = sys.argv[1]
+    print 'Argument List:', ARGS
+    presentation_file = ARGS.file[0]
 
     presentation = Presentation(presentation_file)
 
-    logo_image = "/Users/edmundd/Desktop/admiral_logo.png"
+    logo_image = ARGS.logo[0]
+    # logo_image = "/Users/edmundd/Desktop/admiral_logo.png"
     # logo_image = "/Users/edmundd/Desktop/logo_gb.png"
     # logo_image = "/Users/edmundd/Desktop/Nokia-logo.jpg"
     # logo_image = "/Users/edmundd/Desktop/logo.gif"
@@ -84,7 +98,7 @@ def main():
 
     Image.open(logo_image).save(TEMP_LOGO_FILE)
     for index, slide in enumerate(presentation.slides):
-        print "{0}/{1}".format(index, len(presentation.slides))
+        print "{0}/{1}".format(index + 1, len(presentation.slides))
 
         for shape in slide.placeholders:
             if shape.name == "Picture Placeholder 3":
