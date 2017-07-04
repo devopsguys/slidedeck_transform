@@ -55,17 +55,19 @@ def main():
 
     print 'Number of arguments:', len(sys.argv), 'arguments.'
     print 'Argument List:', str(sys.argv)
+    presentation_file = sys.argv[1]
 
-    presentation = Presentation(sys.argv[1])
+    presentation = Presentation(presentation_file)
 
-    for slide in presentation.slides:
-        logo_image = "/Users/edmundd/Desktop/logo_gb.png"
-        # logo_image = "/Users/edmundd/Desktop/Nokia-logo.jpg"
-        # logo_image = "/Users/edmundd/Desktop/logo.gif"
+    logo_image = "/Users/edmundd/Desktop/admiral_logo.png"
+    # logo_image = "/Users/edmundd/Desktop/logo_gb.png"
+    # logo_image = "/Users/edmundd/Desktop/Nokia-logo.jpg"
+    # logo_image = "/Users/edmundd/Desktop/logo.gif"
+    # trim(Image.open(logo_image)).save(TEMP_LOGO_FILE)
 
-        # trim(Image.open(logo_image)).save(TEMP_LOGO_FILE)
-
-        Image.open(logo_image).save(TEMP_LOGO_FILE)
+    Image.open(logo_image).save(TEMP_LOGO_FILE)
+    for index, slide in enumerate(presentation.slides):
+        print "{0}/{1}".format(index, len(presentation.slides))
 
         for shape in slide.placeholders:
             if shape.name == "Picture Placeholder 3":
@@ -79,12 +81,14 @@ def main():
         if slide.has_notes_slide:
             text_frame = slide.notes_slide.notes_text_frame
             tags = get_tags_in_comments(text_frame.text)
-            if "hello" in tags:
+            if "deleteme" in tags:
+                print "Deleting slide {0} with matching tag '{1}'".format(index, "deleteme")
                 delete_slide(presentation, slide)
 
-        os.remove(TEMP_LOGO_FILE)
+    os.remove(TEMP_LOGO_FILE)
 
-    presentation.save('/Users/edmundd/Desktop/Test Presentation2.pptx')
+    presentation.save(presentation_file.replace(".ppt", "-new.ppt"))
+    print "Done!"
 
 
 if __name__ == '__main__':
