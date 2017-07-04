@@ -18,6 +18,8 @@ required.add_argument('--file', nargs=1, action='store',
                       help="Path to the powerpoint presentation file")
 required.add_argument('--logo', nargs=1, action='store',
                       help="Path to the logo file")
+optional.add_argument('--tags', nargs="?", action='store',
+                      help="List of tags to remove")
 
 
 ARGS = parser.parse_args()
