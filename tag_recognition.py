@@ -86,7 +86,7 @@ def parse_args():
                           help="Path to the powerpoint presentation file")
     required.add_argument('--logo', nargs=1, action='store',
                           help="Path to the logo file")
-    optional.add_argument('--tags', nargs="?", action='store',
+    optional.add_argument('--tags', nargs="?", action='store', default="",
                           help="List of tags to remove")
 
     return parser.parse_args()
@@ -118,35 +118,43 @@ def main():
     for index, slide in enumerate(presentation.slides):
         print "{0}/{1}".format(index + 1, total_slides)
 
-        for shape in slide.placeholders:
-            if shape.name == "Picture Placeholder 3":
-                idx = shape.placeholder_format.idx
-                slide.shapes.add_picture(TEMP_LOGO_FILE,
-                                         slide.placeholders[idx].left,
-                                         slide.placeholders[idx].top,
-                                         None,
-                                         slide.placeholders[idx].height)
+        update_logo(slide)
+
+        tags_to_delete = ARGS.tags.split(",")
 
         if slide.has_notes_slide:
             text_frame = slide.notes_slide.notes_text_frame
             tags_in_comment = get_all_tags_in_comment(text_frame.text)
-            if tags_in_comment != []:
-                matching_tags = copy.copy(tags_in_comment)
-                if ARGS.tags == None:
-                    ARGS.tags = ""
-                tags_to_delete = ARGS.tags.split(",")
-                for tag in tags_to_delete:
-                    if tag in tags_in_comment:
-                        tags_in_comment.remove(tag)
-                if tags_in_comment == []:
-                    print "Deleting slide {0} with matching tags '{1}'".format(index, matching_tags)
-                    delete_slide(presentation, slide)
+            matching_tags = copy.copy(tags_in_comment)
+            if should_delete_slide(tags_in_comment, tags_to_delete):
+                print "Deleting slide {0} with matching tags '{1}'".format(index, matching_tags)
+                delete_slide(presentation, slide)
             text_frame.text = remove_json_from_comment(text_frame.text)
 
     os.remove(TEMP_LOGO_FILE)
 
     presentation.save(presentation_file.replace(".ppt", "-new.ppt"))
     print "Done!"
+
+
+def should_delete_slide(tags_in_comment, tags_to_delete):
+    if tags_in_comment != []:
+        for tag in tags_to_delete:
+            if tag in tags_in_comment:
+                tags_in_comment.remove(tag)
+        return tags_in_comment == []
+    return False
+
+
+def update_logo(slide):
+    for shape in slide.placeholders:
+        if shape.name == "Picture Placeholder 3":
+            idx = shape.placeholder_format.idx
+            slide.shapes.add_picture(TEMP_LOGO_FILE,
+                                     slide.placeholders[idx].left,
+                                     slide.placeholders[idx].top,
+                                     None,
+                                     slide.placeholders[idx].height)
 
 
 if __name__ == '__main__':
