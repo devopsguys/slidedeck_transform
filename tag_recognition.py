@@ -49,6 +49,14 @@ def get_all_tags_in_comment(text):
     return uniq(all_tags)
 
 
+def remove_json_from_comment(text):
+    json_list = find_json_in_string(text)
+    if json_list:
+        for json_block in json_list:
+            text = text.replace(json_block, "")
+    return text
+
+
 def trim(image):
     background = Image.new(image.mode, image.size, image.getpixel((0, 0)))
     diff = ImageChops.difference(image, background)
@@ -130,6 +138,7 @@ def main():
                 if tags_in_comment == []:
                     print "Deleting slide {0} with matching tags '{1}'".format(index, matching_tags)
                     delete_slide(presentation, slide)
+            text_frame.text = remove_json_from_comment(text_frame.text)
 
     os.remove(TEMP_LOGO_FILE)
 
