@@ -9,21 +9,6 @@ import regex
 
 TEMP_LOGO_FILE = "temp_logo.png"
 
-parser = argparse.ArgumentParser(description='Transform a pptx presentation')
-required = parser.add_argument_group('Required arguments')
-optional = parser.add_argument_group('Optional arguments')
-optional.add_argument('--strip-logo', action='store_true',
-                      help="Strip any whitespace from the logo")
-required.add_argument('--file', nargs=1, action='store',
-                      help="Path to the powerpoint presentation file")
-required.add_argument('--logo', nargs=1, action='store',
-                      help="Path to the logo file")
-optional.add_argument('--tags', nargs="?", action='store',
-                      help="List of tags to remove")
-
-
-ARGS = parser.parse_args()
-
 
 def uniq(items):
     return list(set(items))
@@ -81,7 +66,25 @@ def delete_slide(prs, slide):
     del prs.slides._sldIdLst[id_dict[slide_id][0]]
 
 
+def parse_args():
+    parser = argparse.ArgumentParser(
+        description='Transform a pptx presentation')
+    required = parser.add_argument_group('Required arguments')
+    optional = parser.add_argument_group('Optional arguments')
+    optional.add_argument('--strip-logo', action='store_true',
+                          help="Strip any whitespace from the logo")
+    required.add_argument('--file', nargs=1, action='store',
+                          help="Path to the powerpoint presentation file")
+    required.add_argument('--logo', nargs=1, action='store',
+                          help="Path to the logo file")
+    optional.add_argument('--tags', nargs="?", action='store',
+                          help="List of tags to remove")
+
+    ARGS = parser.parse_args()
+
+
 def main():
+    parse_args()
 
     print 'Argument List:', ARGS
     presentation_file = ARGS.file[0]
