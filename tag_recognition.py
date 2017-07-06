@@ -95,16 +95,9 @@ def parse_args():
 def main():
     ARGS = parse_args()
 
-    print 'Argument List:', ARGS
     presentation_file = ARGS.file[0]
-
     presentation = Presentation(presentation_file)
-
     logo_image = ARGS.logo[0]
-    # logo_image = "/Users/edmundd/Desktop/admiral_logo.png"
-    # logo_image = "/Users/edmundd/Desktop/logo_gb.png"
-    # logo_image = "/Users/edmundd/Desktop/Nokia-logo.jpg"
-    # logo_image = "/Users/edmundd/Desktop/logo.gif"
 
     all_tags = get_all_tags_in_presentation(presentation)
     print "All tags: " + str(all_tags)
