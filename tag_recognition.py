@@ -80,8 +80,8 @@ def parse_args():
         description='Transform a pptx presentation')
     required = parser.add_argument_group('Required arguments')
     optional = parser.add_argument_group('Optional arguments')
-    optional.add_argument('--strip-logo', action='store_true',
-                          help="Strip any whitespace from the logo")
+    optional.add_argument('--trim-logo', action='store_true',
+                          help="Trim any whitespace from the logo")
     required.add_argument('--file', nargs=1, action='store',
                           help="Path to the powerpoint presentation file")
     required.add_argument('--logo', nargs=1, action='store',
@@ -105,13 +105,16 @@ def main():
     # logo_image = "/Users/edmundd/Desktop/logo_gb.png"
     # logo_image = "/Users/edmundd/Desktop/Nokia-logo.jpg"
     # logo_image = "/Users/edmundd/Desktop/logo.gif"
-    # trim(Image.open(logo_image)).save(TEMP_LOGO_FILE)
 
     all_tags = get_all_tags_in_presentation(presentation)
     print "All tags: " + str(all_tags)
     total_slides = len(presentation.slides)
 
-    Image.open(logo_image).save(TEMP_LOGO_FILE)
+    if ARGS.trim_logo:
+        trim(Image.open(logo_image)).save(TEMP_LOGO_FILE)
+    else:
+        Image.open(logo_image).save(TEMP_LOGO_FILE)
+
     for index, slide in enumerate(presentation.slides):
         print "{0}/{1}".format(index + 1, total_slides)
 
