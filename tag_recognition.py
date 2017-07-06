@@ -2,6 +2,7 @@ import argparse
 import sys
 import json
 import os
+import copy
 from pptx import Presentation
 from PIL import Image, ImageChops
 import regex
@@ -45,7 +46,7 @@ def get_all_tags_in_comment(text):
                 if not isinstance(tags, list):
                     tags = [tags]
                 all_tags += tags
-    return all_tags
+    return uniq(all_tags)
 
 
 def trim(image):
@@ -80,11 +81,11 @@ def parse_args():
     optional.add_argument('--tags', nargs="?", action='store',
                           help="List of tags to remove")
 
-    ARGS = parser.parse_args()
+    return parser.parse_args()
 
 
 def main():
-    parse_args()
+    ARGS = parse_args()
 
     print 'Argument List:', ARGS
     presentation_file = ARGS.file[0]
@@ -100,10 +101,11 @@ def main():
 
     all_tags = get_all_tags_in_presentation(presentation)
     print "All tags: " + str(all_tags)
+    total_slides = len(presentation.slides)
 
     Image.open(logo_image).save(TEMP_LOGO_FILE)
     for index, slide in enumerate(presentation.slides):
-        print "{0}/{1}".format(index + 1, len(presentation.slides))
+        print "{0}/{1}".format(index + 1, total_slides)
 
         for shape in slide.placeholders:
             if shape.name == "Picture Placeholder 3":
@@ -116,10 +118,18 @@ def main():
 
         if slide.has_notes_slide:
             text_frame = slide.notes_slide.notes_text_frame
-            tags = get_all_tags_in_comment(text_frame.text)
-            if "deleteme" in tags:
-                print "Deleting slide {0} with matching tag '{1}'".format(index, "deleteme")
-                delete_slide(presentation, slide)
+            tags_in_comment = get_all_tags_in_comment(text_frame.text)
+            if tags_in_comment != []:
+                matching_tags = copy.copy(tags_in_comment)
+                if ARGS.tags == None:
+                    ARGS.tags = ""
+                tags_to_delete = ARGS.tags.split(",")
+                for tag in tags_to_delete:
+                    if tag in tags_in_comment:
+                        tags_in_comment.remove(tag)
+                if tags_in_comment == []:
+                    print "Deleting slide {0} with matching tags '{1}'".format(index, matching_tags)
+                    delete_slide(presentation, slide)
 
     os.remove(TEMP_LOGO_FILE)
 
