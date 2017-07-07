@@ -30,9 +30,7 @@ def delete_slide(prs, slide):
 
 
 def should_delete_slide(tags_in_comment, tags_to_delete):
-    if tags_in_comment != []:
-        for tag in tags_to_delete:
-            if tag in tags_in_comment:
-                tags_in_comment.remove(tag)
-        return tags_in_comment == []
+    for tag in tags_to_delete:
+        if tag in tags_in_comment:
+            return True
     return False
