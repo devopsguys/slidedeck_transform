@@ -46,7 +46,6 @@ def main():
     else:
         Image.open(logo_image).save(temp_logo_file)
 
-    templates = []
     for index, slide in enumerate(presentation.slides):
         print "{0}/{1}".format(index + 1, total_slides)
 
@@ -56,7 +55,6 @@ def main():
             text_frame = shape.text_frame
             for paragraph in text_frame.paragraphs:
                 for template in sdt_string_replace.find_templates_in_string(paragraph.text):
-                    templates += [template]
                     paragraph.text = paragraph.text.replace(
                         '{{' + template + '}}', ARGS.client[0])
 
