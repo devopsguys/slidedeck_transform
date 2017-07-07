@@ -21,3 +21,13 @@ def find_all_template_strings_in_presentation(presentation):
                 for template in find_templates_in_string(paragraph.text):
                     templates += [template]
     return templates
+
+
+def replace_template_string(slide, template, text):
+    for shape in slide.shapes:
+        if not shape.has_text_frame:
+            continue
+        text_frame = shape.text_frame
+        for paragraph in text_frame.paragraphs:
+            paragraph.text = paragraph.text.replace(
+                '{{' + template + '}}', text)

@@ -1,5 +1,4 @@
 import os
-import copy
 import argparse
 from pptx import Presentation
 from PIL import Image
@@ -34,8 +33,10 @@ def main():
 
     presentation_file = ARGS.file[0]
     presentation = Presentation(presentation_file)
+    client_name = ARGS.client[0]
     logo_image = ARGS.logo[0]
     temp_logo_file = sdt_common.TEMP_LOGO_FILE
+    tags_to_delete = ARGS.tags.split(",")
 
     all_tags = sdt_tag_parse.get_all_tags_in_presentation(presentation)
     print "All tags: " + str(all_tags)
@@ -49,34 +50,15 @@ def main():
     for index, slide in enumerate(presentation.slides):
         print "{0}/{1}".format(index + 1, total_slides)
 
-        for shape in slide.shapes:
-            if not shape.has_text_frame:
-                continue
-            text_frame = shape.text_frame
-            for paragraph in text_frame.paragraphs:
-                for template in sdt_string_replace.find_templates_in_string(paragraph.text):
-                    paragraph.text = paragraph.text.replace(
-                        '{{' + template + '}}', ARGS.client[0])
-
         sdt_logo_stamp.update_logo(slide)
+        sdt_string_replace.replace_template_string(
+            slide, "client", client_name)
+        sdt_tag_parse.delete_slide_if_tag_matches(
+            presentation, index, slide, tags_to_delete)
 
-        tags_to_delete = ARGS.tags.split(",")
-
-        if slide.has_notes_slide:
-            text_frame = slide.notes_slide.notes_text_frame
-            tags_in_comment = sdt_tag_parse.get_all_tags_in_comment(
-                text_frame.text)
-            matching_tags = copy.copy(tags_in_comment)
-            if sdt_common.should_delete_slide(tags_in_comment, tags_to_delete):
-                print "Deleting slide {0} with matching tags '{1}'".format(index, matching_tags)
-                sdt_common.delete_slide(presentation, slide)
-            text_frame.text = sdt_tag_parse.remove_json_from_comment(
-                text_frame.text)
-
-    print "List of template strings: {0}".format(templates)
     os.remove(temp_logo_file)
     presentation.save(presentation_file.replace(
-        ".ppt", "-{0}.ppt".format(ARGS.client[0])))
+        ".ppt", "-{0}.ppt".format(client_name)))
     print "Done!"
 
 
