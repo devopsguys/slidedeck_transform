@@ -2,6 +2,7 @@ import argparse
 import json
 from pptx import Presentation
 import sdt_tag_parse
+import sdt_string_replace
 
 
 def parse_args():
@@ -20,7 +21,10 @@ def main():
     presentation_file = ARGS.file[0]
     presentation = Presentation(presentation_file)
     all_tags = sdt_tag_parse.get_all_tags_in_presentation(presentation)
-    print json.dumps(all_tags)
+    all_template_strings = sdt_string_replace.find_all_template_strings_in_presentation(
+        presentation)
+
+    print json.dumps({"tags": all_tags, "templates": all_template_strings})
 
 
 if __name__ == '__main__':
