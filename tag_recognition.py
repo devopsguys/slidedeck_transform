@@ -36,6 +36,15 @@ def find_json_in_string(text):
     return regex.findall('{(?:[^{}]|(?R))*}', text)
 
 
+def find_templates_in_string(text):
+    templates = regex.findall('{{.*?}}', text)
+
+    def strip_brackets(x):
+        return x[2:-2]
+
+    return list(map(strip_brackets, templates))
+
+
 def get_all_tags_in_comment(text):
     json_list = find_json_in_string(text)
     all_tags = []
@@ -88,6 +97,8 @@ def parse_args():
                           help="Path to the logo file")
     optional.add_argument('--tags', nargs="?", action='store', default="",
                           help="List of tags to remove")
+    required.add_argument('--client', nargs=1,
+                          action='store', help="The name of the client")
 
     return parser.parse_args()
 
@@ -108,8 +119,19 @@ def main():
     else:
         Image.open(logo_image).save(TEMP_LOGO_FILE)
 
+    templates = []
     for index, slide in enumerate(presentation.slides):
         print "{0}/{1}".format(index + 1, total_slides)
+
+        for shape in slide.shapes:
+            if not shape.has_text_frame:
+                continue
+            text_frame = shape.text_frame
+            for paragraph in text_frame.paragraphs:
+                for template in find_templates_in_string(paragraph.text):
+                    templates += [template]
+                    paragraph.text = paragraph.text.replace(
+                        '{{' + template + '}}', ARGS.client[0])
 
         update_logo(slide)
 
@@ -124,9 +146,10 @@ def main():
                 delete_slide(presentation, slide)
             text_frame.text = remove_json_from_comment(text_frame.text)
 
+    print "List of template strings: {0}".format(templates)
     os.remove(TEMP_LOGO_FILE)
-
-    presentation.save(presentation_file.replace(".ppt", "-new.ppt"))
+    presentation.save(presentation_file.replace(
+        ".ppt", "-{0}.ppt".format(ARGS.client[0])))
     print "Done!"
 
 
