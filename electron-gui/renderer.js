@@ -13,7 +13,7 @@ basename = function (path) {
 
 // Make paths work on windows and unix
 normalise = (filepath) => {
-    return filepath.replace(/ /g,"%20").replace(/\\/g,'/')
+    return filepath.replace(/ /g, "%20").replace(/\\/g, '/')
 }
 
 var pptx_drag_drop = document.getElementById('drag-drop-pptx');
@@ -79,22 +79,16 @@ logo_drag_drop.ondrop = (e) => {
     return false;
 };
 
+defaultOutputFilename = (filename, client) => {
+    return filename.replace(".ppt", "-" + client + ".ppt")
+}
+
 var submitButton = document.getElementById('submit')
 
 submitButton.onclick = () => {
 
-    tag_list = Array.prototype.join.call(getTagsToDelete(), ',');
 
-    var options = {
-        mode: 'text',
-        scriptPath: '..',
-        args: [
-            '--file', PPTX_FILE,
-            '--tags', tag_list,
-            '--logo', LOGO_FILE,
-            '--client', getClientName()
-        ]
-    };
+    tag_list = Array.prototype.join.call(getTagsToDelete(), ',');
 
     if (!PPTX_FILE) {
         alert("Select a powerpoint file")
@@ -111,13 +105,40 @@ submitButton.onclick = () => {
         return
     }
 
-    PythonShell.run('cli_transform.py', options, function (err, results) {
-        if (err) {
-            alert(err);
-        } else {
-            alert("Done!");
-        }
+    dialogOptions = {
+        title: "Save Powerpoint Presentation",
+        defaultPath: defaultOutputFilename(PPTX_FILE, getClientName()),
+        filters: [
+            { name: 'Powerpoint Presentation', extension: ['ppt', 'pptx'] }
+        ]
+    }
+
+    dialog.showSaveDialog(dialogOptions, function (outFile) {
+        if (outFile === undefined) return;
+
+        var options = {
+            mode: 'text',
+            scriptPath: '..',
+            args: [
+                '--file', PPTX_FILE,
+                '--tags', tag_list,
+                '--logo', LOGO_FILE,
+                '--client', getClientName(),
+                '--out', outFile
+            ]
+        };
+
+        PythonShell.run('cli_transform.py', options, function (err, results) {
+            if (err) {
+                alert(err);
+            } else {
+                alert("Done!");
+            }
+
+        });
     });
+
+
 
 }
 

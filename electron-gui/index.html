@@ -1,46 +1,52 @@
 <!DOCTYPE html>
 <html>
-  <head>
+
+<head>
     <meta charset="UTF-8">
     <title>DOG Slidedeck generator</title>
     <link rel="stylesheet" type="text/css" href="photon/css/photon.css">
     <link rel="stylesheet" type="text/css" href="style.css">
-    <script>window.$ = window.jQuery = require('./node_modules/jquery/dist/jquery.js');</script>
-  </head>
-  </body>
-  
-    <div class="window">
+    <script>
+        window.$ = window.jQuery = require('./node_modules/jquery/dist/jquery.js');
+    </script>
+</head>
+</body>
 
-        <div class="window-content">
-              
-            <div class="pane-group">
-                <div class="pane side-pane">
-                    <div id="drag-drop-pptx" class="drop-file">Powerpoint</div>
-                    <div id="drag-drop-logo" class="drop-file">Logo</div>
-                </div>
-                <div class="pane tag-pane">
-                    <form id="tag-list">
-                        <div class="help">
-                            Drag and drop a presentation template into the boxes to the left.
-                        </div>
-                    </form>
-                </div>
+<div class="window">
+
+    <div class="window-content">
+
+        <div class="pane-group">
+            <div class="pane side-pane">
+                <div id="drag-drop-pptx" class="drop-file">Powerpoint</div>
+                <div id="drag-drop-logo" class="drop-file">Logo</div>
+            </div>
+            <div class="pane tag-pane">
+                <form id="tag-list">
+                    <div class="help">
+                        Drag and drop a presentation template into the boxes to the left.
+                    </div>
+                </form>
             </div>
         </div>
-        
-
-
-        <footer class="toolbar toolbar-footer">
-            <div class="toolbar-actions">
-                <button id="submit" class="btn btn-primary pull-right">
-                Generate Slidedeck
-                </button>
-            </div>
-        </footer>
     </div>
 
-  <script>
+
+
+    <footer class="toolbar toolbar-footer">
+        <div class="toolbar-actions">
+            <button id="submit" class="btn btn-primary pull-right">
+                Generate Slidedeck
+                </button>
+        </div>
+    </footer>
+</div>
+
+<script>
     // You can also require other files to run in this process
+    var dialog = require('electron').remote.dialog
     require('./renderer.js')
-  </script>
+
+</script>
+
 </html>

@@ -16,6 +16,8 @@ def parse_args():
     optional = parser.add_argument_group('Optional arguments')
     optional.add_argument('--trim-logo', action='store_true',
                           help="Trim any whitespace from the logo")
+    optional.add_argument('--out', action='store',
+                          help="The path to the output file")
     required.add_argument('--file', nargs=1, action='store',
                           help="Path to the powerpoint presentation file")
     required.add_argument('--logo', nargs=1, action='store',
@@ -37,6 +39,8 @@ def main():
     logo_image = ARGS.logo[0]
     temp_logo_file = sdt_common.TEMP_LOGO_FILE
     tags_to_delete = ARGS.tags.split(",")
+    output_file = ARGS.out or presentation_file.replace(
+        ".ppt", "-{0}.ppt".format(client_name))
 
     all_tags = sdt_tag_parse.get_all_tags_in_presentation(presentation)
     print "All tags: " + str(all_tags)
@@ -57,8 +61,7 @@ def main():
             presentation, index, slide, tags_to_delete)
 
     os.remove(temp_logo_file)
-    presentation.save(presentation_file.replace(
-        ".ppt", "-{0}.ppt".format(client_name)))
+    presentation.save(output_file)
     print "Done!"
 
 
