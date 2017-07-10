@@ -11,6 +11,11 @@ basename = function (path) {
     return path.replace(/\\/g, '/').replace(/.*\//, '');
 }
 
+// Make paths work on windows and unix
+normalise = (filepath) => {
+    return filepath.replace(/ /g,"%20").replace(/\\/g,'/')
+}
+
 var pptx_drag_drop = document.getElementById('drag-drop-pptx');
 
 pptx_drag_drop.ondragover = () => {
@@ -68,7 +73,8 @@ logo_drag_drop.ondrop = (e) => {
     filename = e.dataTransfer.files[0].path
     $(logo_drag_drop).text("")
     // $(logo_drag_drop).css("background","url('" + filename + "')")  
-    $(logo_drag_drop).css("backgroundImage", "url('file://" + filename + "')")
+    console.log(normalise(filename))
+    $(logo_drag_drop).css("backgroundImage", "url('file://" + normalise(filename) + "')")
     LOGO_FILE = filename
     return false;
 };
