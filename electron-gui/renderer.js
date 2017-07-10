@@ -7,8 +7,8 @@ var PythonShell = require('python-shell');
 LOGO_FILE = ""
 PPTX_FILE = ""
 
-basename = function(path) {
-    return path.replace(/\\/g,'/').replace( /.*\//, '' );
+basename = function (path) {
+    return path.replace(/\\/g, '/').replace(/.*\//, '');
 }
 
 var pptx_drag_drop = document.getElementById('drag-drop-pptx');
@@ -28,19 +28,19 @@ pptx_drag_drop.ondragend = () => {
 pptx_drag_drop.ondrop = (e) => {
     e.preventDefault();
     filename = e.dataTransfer.files[0].path
-    
-    $(pptx_drag_drop).text(basename(filename))  
+
+    $(pptx_drag_drop).text(basename(filename))
     PPTX_FILE = filename
 
     var options = {
         mode: 'text',
-        scriptPath: '../slidedeck_transform',
+        scriptPath: '..',
         args: ['--file', filename]
     };
 
     PythonShell.run('cli_list_metadata.py', options, function (err, results) {
         if (err) throw err;
-        
+
         // alert("data:" + results);
         createTagList(JSON.parse(results).tags)
     });
@@ -66,9 +66,9 @@ logo_drag_drop.ondrop = (e) => {
     e.preventDefault();
 
     filename = e.dataTransfer.files[0].path
-    $(logo_drag_drop).text("") 
+    $(logo_drag_drop).text("")
     // $(logo_drag_drop).css("background","url('" + filename + "')")  
-    $(logo_drag_drop).css("backgroundImage","url('file://" + filename + "')")  
+    $(logo_drag_drop).css("backgroundImage", "url('file://" + filename + "')")
     LOGO_FILE = filename
     return false;
 };
@@ -81,26 +81,26 @@ submitButton.onclick = () => {
 
     var options = {
         mode: 'text',
-        scriptPath: '../slidedeck_transform',
+        scriptPath: '..',
         args: [
             '--file', PPTX_FILE,
             '--tags', tag_list,
             '--logo', LOGO_FILE,
             '--client', getClientName()
-            ]
+        ]
     };
 
-    if(!PPTX_FILE){
+    if (!PPTX_FILE) {
         alert("Select a powerpoint file")
         return
     }
 
-    if(!LOGO_FILE){
+    if (!LOGO_FILE) {
         alert("Select a logo file")
         return
     }
 
-    if(!getClientName()){
+    if (!getClientName()) {
         alert("Input a client name")
         return
     }
@@ -108,7 +108,7 @@ submitButton.onclick = () => {
     PythonShell.run('cli_transform.py', options, function (err, results) {
         if (err) {
             alert(err);
-        }else{
+        } else {
             alert("Done!");
         }
     });
@@ -117,7 +117,7 @@ submitButton.onclick = () => {
 
 getTagsToDelete = () => {
     unchecked = $("input:checkbox[name=tag-list]:not(:checked)")
-    return unchecked.map(function(x) {
+    return unchecked.map(function (x) {
         return unchecked[x].id;
     });
 }
@@ -154,15 +154,15 @@ createTagList = (tags) => {
     container.appendChild(clientDiv);
 
     var tagDiv = document.createElement('div');
-    if(tags.length == 0){
+    if (tags.length == 0) {
         tagDiv.innerHTML = "No tags found in presentation"
-    }else{
+    } else {
         tagDiv.innerHTML = "<h2>Tags to keep</h2>"
     }
 
     container.appendChild(tagDiv)
 
-    tags.forEach(function(tag) {
+    tags.forEach(function (tag) {
 
         var div = document.createElement('div');
         div.class = "checkbox"
