@@ -133,12 +133,15 @@ submitButton.onclick = () => {
             ]
         };
 
+        $("#loading").css("display", "block")
+
         PythonShell.run('cli_transform.py', options, function (err, results) {
             if (err) {
                 alert(err);
             } else {
                 alert("Done!");
             }
+            $("#loading").css("display", "none")
 
         });
     });
