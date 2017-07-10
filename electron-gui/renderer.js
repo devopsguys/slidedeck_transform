@@ -118,7 +118,7 @@ submitButton.onclick = () => {
 getTagsToDelete = () => {
     unchecked = $("input:checkbox[name=tag-list]:not(:checked)")
     return unchecked.map(function (x) {
-        return unchecked[x].id;
+        return unchecked[x].getAttribute("data-tagname");
     });
 }
 
@@ -172,6 +172,7 @@ createTagList = (tags) => {
         checkbox.name = "tag-list";
         checkbox.checked = true;
         checkbox.id = "tag_checkbox_" + tag;
+        checkbox.setAttribute('data-tagname', tag)
 
         var label = document.createElement('label')
         label.htmlFor = "tag_checkbox_" + tag;
