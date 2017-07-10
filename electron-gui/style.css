@@ -1,0 +1,72 @@
+.drop-file {
+    border: 4px dashed black;
+    height: 250px;
+    width:250px;
+    background-color: lightgrey;
+    margin: 25px;
+    text-align: center;
+    line-height: 250px;
+    position: relative;
+    z-index: 10;
+    font-size: 20px;
+}
+
+.side-pane {
+    max-width: 300px;
+    min-width: 300px;
+}
+
+.help {
+    text-align: center;
+    top: 45%;
+    position: absolute;
+    width: 100%;
+    font-size: 20px;
+    padding: 20px;
+}
+
+#drag-drop-logo {
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center center;
+}
+
+body {
+    font-family: "Gill Sans MT", Arial, Helvetica, sans-serif;
+}
+
+label {
+    display: initial;
+}
+
+input {
+    margin: 10px;
+}
+
+.pane {
+    background: #F0F0F0;
+}
+
+#tag-list div:nth-child(even){
+    background: #FCFCFC;
+}
+
+form div {
+    padding-left: 10px;
+
+}
+
+label {
+    margin-left: 5px;
+    font-size: 20px;
+}
+
+.dog-logo {
+    position: fixed;
+    bottom: 0px;
+    left: 0px;
+    background: url(img/logo.png);
+    width: 50px;
+    height: 50px;
+    background-size: cover;
+}
