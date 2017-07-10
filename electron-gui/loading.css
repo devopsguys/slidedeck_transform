@@ -7,12 +7,22 @@
     display: none;
 }
 
+#loading_text {
+    color: white;
+    font-size: 20px;
+    top: 50%;
+    left: 0px;
+    text-align: center;
+    width: 100%;
+    position: relative;
+}
+
 .sk-circle {
   width: 60px;
   height: 60px;
   position: relative;
-  top: calc(50% - 1em);
-  left: calc(50% - 1em);
+  top: calc(50% - 30px);
+  left: calc(50% - 30px);
 }
 .sk-circle .sk-child {
   width: 100%;

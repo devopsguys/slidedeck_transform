@@ -133,15 +133,19 @@ submitButton.onclick = () => {
             ]
         };
 
-        $("#loading").css("display", "block")
+        $("#loading").fadeIn()
+
+        $("#loading_text").fadeOut(function () {
+            $(this).text("Generating Slidedeck...").fadeIn();
+        });
 
         PythonShell.run('cli_transform.py', options, function (err, results) {
             if (err) {
                 alert(err);
             } else {
-                alert("Done!");
+                $("#loading_text").text("Done!")
             }
-            $("#loading").css("display", "none")
+            $("#loading").delay(400).fadeOut()
 
         });
     });
