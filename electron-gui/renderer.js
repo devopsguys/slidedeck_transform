@@ -83,6 +83,11 @@ defaultOutputFilename = (filename, client) => {
     return filename.replace(".ppt", "-" + client + ".ppt")
 }
 
+var resetButton = document.getElementById('reset')
+resetButton.onclick = () => {
+    location.reload();
+}
+
 var submitButton = document.getElementById('submit')
 
 submitButton.onclick = () => {
