@@ -11,6 +11,10 @@ basename = function (path) {
     return path.replace(/\\/g, '/').replace(/.*\//, '');
 }
 
+String.prototype.toUpperCaseFirstChar = function () {
+    return this.substr(0, 1).toUpperCase() + this.substr(1);
+}
+
 // Make paths work on windows and unix
 normalise = (filepath) => {
     return filepath.replace(/ /g, "%20").replace(/\\/g, '/')
@@ -47,7 +51,7 @@ pptx_drag_drop.ondrop = (e) => {
         if (err) throw err;
 
         // alert("data:" + results);
-        createTagList(JSON.parse(results).tags)
+        createInputList(JSON.parse(results).tags, JSON.parse(results).templates)
     });
 
     return false;
@@ -105,14 +109,23 @@ submitButton.onclick = () => {
         return
     }
 
-    if (!getClientName()) {
-        alert("Input a client name")
+    templates = $("#templates_container input")
+    try {
+        Array.prototype.forEach.call(templates, function (template) {
+            if (template.value == "") {
+                alert("Input a value for the template '" + template.getAttribute("data-templatename") + "'")
+                templates_bool = true
+                throw BreakException;
+            }
+        });
+    }
+    catch (e) {
         return
     }
 
     dialogOptions = {
         title: "Save Powerpoint Presentation",
-        defaultPath: defaultOutputFilename(PPTX_FILE, getClientName()),
+        defaultPath: defaultOutputFilename(PPTX_FILE, "new"),
         filters: [
             { name: 'Powerpoint Presentation', extension: ['ppt', 'pptx'] }
         ]
@@ -128,7 +141,7 @@ submitButton.onclick = () => {
                 '--file', PPTX_FILE,
                 '--tags', tag_list,
                 '--logo', LOGO_FILE,
-                '--client', getClientName(),
+                '--templates', getTemplateData(),
                 '--out', outFile
             ]
         };
@@ -161,36 +174,45 @@ getTagsToDelete = () => {
     });
 }
 
-getClientName = () => {
-    return $("#client-input").val()
+getTemplateData = () => {
+    templates = $("#templates_container input")
+    data = templates.map(function (x) {
+        a = { "name": null, "value": null }
+        a["name"] = templates[x].getAttribute("data-templatename")
+        a["value"] = templates[x].value
+        return JSON.stringify(a)
+    });
+
+    return "[" + Array.prototype.join.call(data, ',') + "]";
 }
 
-createTransformCommand = (pptx, logo, tags) => {
-    tag_list = Array.prototype.join.call(tags, ',');
-    return 'python cli_transform.py --file "' + PPTX_FILE + ' --tags "' + tag_list + '" --logo "' + LOGO_FILE + '"' + '--client "' + getClientName() + '"';
-}
-
-createTagList = (tags) => {
+createInputList = (tags, templates) => {
     container = document.getElementById('tag-list')
     container.innerHTML = ""
     console.log(tags)
 
+    var templatesContainer = document.createElement('div');
+    templatesContainer.id = "templates_container"
     var templatesHeader = document.createElement('div');
     templatesHeader.innerHTML = "<h2>Text Replacement</h2>"
 
-    container.appendChild(templatesHeader)
+    templatesContainer.appendChild(templatesHeader)
 
+    templates.forEach(function (template) {
+        var templateDiv = document.createElement('div');
+        var templateLabel = document.createElement('label')
+        var templateInput = document.createElement('input');
+        templateDiv.id = "template_textbox_" + template
+        templateInput.setAttribute('data-templatename', template)
+        templateInput.id = template + "-input";
+        templateLabel.innerHTML = template.toUpperCaseFirstChar() + ":"
+        templateInput.placeholder = "Value for {{" + template + "}}";
+        templateDiv.appendChild(templateLabel);
+        templateDiv.appendChild(templateInput);
+        templatesContainer.appendChild(templateDiv);
+    });
 
-    var clientDiv = document.createElement('div');
-    var clientLabel = document.createElement('label')
-    var clientInput = document.createElement('input');
-    clientDiv.id = "client"
-    clientInput.id = "client-input";
-    clientLabel.innerHTML = "Client:"
-    clientInput.placeholder = "The name of the client";
-    clientDiv.appendChild(clientLabel);
-    clientDiv.appendChild(clientInput);
-    container.appendChild(clientDiv);
+    container.appendChild(templatesContainer)
 
     var tagDiv = document.createElement('div');
     if (tags.length == 0) {

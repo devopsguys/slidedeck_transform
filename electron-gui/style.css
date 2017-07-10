@@ -70,3 +70,7 @@ label {
     height: 50px;
     background-size: cover;
 }
+
+#templates_container {
+    padding: 0px;
+}
