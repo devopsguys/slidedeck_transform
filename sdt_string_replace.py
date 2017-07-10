@@ -29,5 +29,6 @@ def replace_template_string(slide, template, text):
             continue
         text_frame = shape.text_frame
         for paragraph in text_frame.paragraphs:
-            paragraph.text = paragraph.text.replace(
-                '{{' + template + '}}', text)
+            if "{{{0}}}".format(template) in paragraph.text: 
+                paragraph.text = paragraph.text.replace(
+                    '{{' + template + '}}', text)
