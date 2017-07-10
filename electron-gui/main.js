@@ -19,7 +19,7 @@ function createWindow() {
 
     height = 640
     if (isWin) {
-        height += 20
+        height += 40
     }
     mainWindow = new BrowserWindow({ width: 800, height: height })
 
