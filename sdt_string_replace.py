@@ -2,11 +2,12 @@ import regex
 import sdt_common
 
 
+def strip_brackets(x):
+    return x[2:-2].strip().lower()
+
+
 def find_templates_in_string(text):
     templates = regex.findall('{{.*?}}', text)
-
-    def strip_brackets(x):
-        return x[2:-2].strip()
 
     return list(map(strip_brackets, templates))
 
@@ -30,6 +31,7 @@ def replace_template_string(slide, template, text):
             continue
         text_frame = shape.text_frame
         for paragraph in text_frame.paragraphs:
-            if "{{{0}}}".format(template) in paragraph.text:
-                paragraph.text = paragraph.text.replace(
-                    '{{' + template + '}}', text)
+            for template_placeholder in regex.findall('{{.*?}}', paragraph.text):
+                if strip_brackets(template_placeholder) == template:
+                    paragraph.text = paragraph.text.replace(
+                        template_placeholder, text)
