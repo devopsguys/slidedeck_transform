@@ -43,14 +43,13 @@ pptx_drag_drop.ondrop = (e) => {
 
     var options = {
         mode: 'text',
-        scriptPath: '..',
+        scriptPath: 'slidedeck_transform',
         args: ['--file', filename]
     };
 
     PythonShell.run('cli_list_metadata.py', options, function (err, results) {
         if (err) throw err;
 
-        // alert("data:" + results);
         createInputList(JSON.parse(results).tags, JSON.parse(results).templates)
     });
 
@@ -136,7 +135,7 @@ submitButton.onclick = () => {
 
         var options = {
             mode: 'text',
-            scriptPath: '..',
+            scriptPath: 'slidedeck_transform',
             pythonOptions: '-u',
             args: [
                 '--file', PPTX_FILE,
@@ -171,17 +170,6 @@ submitButton.onclick = () => {
 
         });
 
-        // pyshell.send("")
-
-        // pyshell.run(function (err, results) {
-        //     if (err) {
-        //         alert(err);
-        //     } else {
-        //         $("#loading_text").text("Done!")
-        //     }
-        //     $("#loading").delay(400).fadeOut()
-
-        // });
     });
 
 

@@ -3,3 +3,4 @@ temp_logo.png
 *.pyc
 .cache
 .vscode
+node_modules
