@@ -137,6 +137,7 @@ submitButton.onclick = () => {
         var options = {
             mode: 'text',
             scriptPath: '..',
+            pythonOptions: '-u',
             args: [
                 '--file', PPTX_FILE,
                 '--tags', tag_list,
@@ -152,7 +153,15 @@ submitButton.onclick = () => {
             $(this).text("Generating Slidedeck...").fadeIn();
         });
 
-        PythonShell.run('cli_transform.py', options, function (err, results) {
+        var pyshell = new PythonShell('cli_transform.py', options);
+
+        pyshell.on('message', function (message) {
+            // received a message sent from the Python script (a simple "print" statement)
+            $("#loading_text").text("Generating Slidedeck...\n" + message)
+            console.log(message);
+        });
+
+        pyshell.end(function (err, results) {
             if (err) {
                 alert(err);
             } else {
@@ -161,6 +170,18 @@ submitButton.onclick = () => {
             $("#loading").delay(400).fadeOut()
 
         });
+
+        // pyshell.send("")
+
+        // pyshell.run(function (err, results) {
+        //     if (err) {
+        //         alert(err);
+        //     } else {
+        //         $("#loading_text").text("Done!")
+        //     }
+        //     $("#loading").delay(400).fadeOut()
+
+        // });
     });
 
 

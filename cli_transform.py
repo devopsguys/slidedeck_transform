@@ -43,7 +43,6 @@ def main():
         ".ppt", "-{0}.ppt".format("new"))
 
     all_tags = sdt_tag_parse.get_all_tags_in_presentation(presentation)
-    print "All tags: " + str(all_tags)
     total_slides = len(presentation.slides)
 
     if ARGS.trim_logo:

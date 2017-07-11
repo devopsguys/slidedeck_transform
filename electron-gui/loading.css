@@ -15,6 +15,7 @@
     text-align: center;
     width: 100%;
     position: relative;
+    white-space: pre;
 }
 
 .sk-circle {
