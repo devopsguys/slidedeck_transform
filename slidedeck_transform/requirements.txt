@@ -1,5 +1,4 @@
 python-pptx
-pillow
 regex
 pytest
 pep8

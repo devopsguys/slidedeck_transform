@@ -10,11 +10,10 @@
     "keywords": [],
     "author": "Devopsguys",
     "license": "MIT",
-    "devDependencies": {
-        "electron": "~1.6.2",
-        "jquery": "^3.2.1"
-    },
+    "devDependencies": {},
     "dependencies": {
-        "python-shell": "^0.4.0"
+        "electron": "~1.6.2",
+        "python-shell": "^0.4.0",
+        "jquery": "^3.2.1"
     }
 }
