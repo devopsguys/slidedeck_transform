@@ -1,8 +1,12 @@
 # Slidedeck Transformer
 
-* Add client logo to each slide
+Parses and updates a PPTX file, allowing us to create more generic slidedecks.
+
+* Add a client logo to each slide
 * Replace templates text using {{mustache}} syntax
-* Drag-and-drop GUI
+* Remove sections that contain a certain tag
+
+Driven via a drag-and-drop GUI (electron), with a CLI backend (python).
 
 ## Installation
 
