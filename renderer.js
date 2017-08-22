@@ -207,7 +207,8 @@ createInputList = (tags, templates) => {
 
     templatesContainer.appendChild(templatesHeader)
 
-    templates.forEach(function (template) {
+    templates.forEach(function (template_object) {
+        var template = template_object.name
         var templateDiv = document.createElement('div');
         var templateLabel = document.createElement('label')
         var templateInput = document.createElement('input');
@@ -216,6 +217,7 @@ createInputList = (tags, templates) => {
         templateInput.id = template + "-input";
         templateLabel.innerHTML = template.toUpperCaseFirstChar() + ":"
         templateInput.placeholder = "Value for {{" + template + "}}";
+        templateInput.value = template_object.default
         templateDiv.appendChild(templateLabel);
         templateDiv.appendChild(templateInput);
         templatesContainer.appendChild(templateDiv);
