@@ -33,5 +33,15 @@ def replace_template_string(slide, template, text):
         for paragraph in text_frame.paragraphs:
             for template_placeholder in regex.findall('{{.*?}}', paragraph.text):
                 if strip_brackets(template_placeholder) == template:
-                    paragraph.text = paragraph.text.replace(
-                        template_placeholder, text)
+                    replace_paragraph_text_retaining_initial_formatting(paragraph, paragraph.text.replace(
+                        template_placeholder, text))
+
+
+def replace_paragraph_text_retaining_initial_formatting(paragraph, new_text):
+    p = paragraph._p  # the lxml element containing the `<a:p>` paragraph element
+    # remove all but the first run
+    for idx, run in enumerate(paragraph.runs):
+        if idx == 0:
+            continue
+        p.remove(run._r)
+    paragraph.runs[0].text = new_text
