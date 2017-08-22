@@ -19,10 +19,12 @@ def get_all_tags_in_comment(text):
     if json_list:
         for json_block in json_list:
             if sdt_common.is_json(json_block):
-                tags = json.loads(json_block)['tags']
-                if not isinstance(tags, list):
-                    tags = [tags]
-                all_tags += tags
+                json_data = json.loads(json_block)
+                if 'tags' in json_data.keys():
+                    tags = json_data['tags']
+                    if not isinstance(tags, list):
+                        tags = [tags]
+                    all_tags += tags
     return sdt_common.uniq(all_tags)
 
 
